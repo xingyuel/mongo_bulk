@@ -5,7 +5,10 @@ import com.grainger.Idea.data.Person;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -17,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Tester {
     private static final int SIZE = 10000; // for local
     private PersonRepository personRepository;
@@ -29,6 +33,7 @@ public class Tester {
     private Long lastModified;
     private Long startTime;
     private Boolean isDeleted = false;
+
     @Autowired
     Tester(PersonRepository personRepository, Creator creator) {
         this.personRepository = personRepository;
@@ -62,22 +67,27 @@ public class Tester {
 
         log.info("\n\ntotal time used: {}\n\n", timeSpan);
     }
+
     @Test   /* If necessary, debug this method to see it will loop through the List. */
+    @Order(1)
     void testSaveAll() {
         personRepository.saveAll(persons);
     }
 
     @Test
+    @Order(2)
     void testOneByOne() {
         persons.forEach(product -> personRepository.save(product));
     }
 
     @Test
+    @Order(3)
     void testBulkUpsert() {
         personRepository.bulkUpsert(persons);
     }
 
     @Test
+    @Order(4)
     void testUpdateSpecificFieldsByIds() {
         List<Integer> ssnNumbers = new ArrayList<>();
         persons.forEach(person -> ssnNumbers.add(person.getSsn()));
